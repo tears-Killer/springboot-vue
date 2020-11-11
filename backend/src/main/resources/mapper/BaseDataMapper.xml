@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.mapper.BaseDataMapper">
+
+    <resultMap id="basedataMap" type="baseData">
+        <result column="dayCount" property="dayOrderCount"/>
+        <result column="dayProfit" property="dayOrderProfit"/>
+        <result column="weekCount" property="weekOrderCount"/>
+        <result column="weekProfit" property="weekOrderProfit"/>
+    </resultMap>
+
+    <select id="selectBaseData" resultMap="basedataMap">
+        select o1.count as dayCount,o1.price as dayProfit,o2.count as weekCount,o2.price as weekProfit from
+        (select count(*) as count,sum(s.shop_price) as price from orders o,shops s where DATEDIFF(order_time,NOW()) = 0 and o.shop_id = s.shop_id) o1,
+        (select count(*) as count,sum(s.shop_price) as price from orders o,shops s where YEARWEEK(DATE_FORMAT(order_time,'%Y-%m-%d')) = YEARWEEK(NOW())-1  and o.shop_id = s.shop_id) o2
+    </select>
+
+    <select id="selectFoodCount" resultType="int">
+SELECT IFNULL(b.count,0) AS count
+FROM (
+    SELECT '青椒肉丝' AS food
+    UNION ALL
+    SELECT '干煸土豆丝' AS food
+    UNION ALL
+    SELECT '肉末茄子' AS food
+    UNION ALL
+    SELECT '水煮肉片' AS food
+    UNION ALL
+    SELECT '鱼香肉丝' AS food
+    UNION ALL
+    SELECT '红烧排骨' AS food
+) a LEFT JOIN (
+select count(*) as count,s.shop_name as food from orders o,shops s where YEARWEEK(DATE_FORMAT(order_time,'%Y-%m-%d')) = YEARWEEK(NOW())-1 and o.shop_id = s.shop_id GROUP BY s.shop_name  ORDER BY s.shop_price) b
+on a.food = b.food
+    </select>
+
+    <select id="selectDayOrder" resultType="int">
+        SELECT IFNULL(b.count,0) AS COUNT
+FROM (
+    SELECT CURDATE() AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 1 DAY) AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 2 DAY) AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 3 DAY) AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 4 DAY) AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 5 DAY) AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 6 DAY) AS click_date
+) a LEFT JOIN (
+select date(order_time) as time,count(*) as count from orders GROUP BY date(order_time)) b
+on a.click_date = b.time order by a.click_date ASC
+    </select>
+
+    <select id="selectDayProfit" resultType="double">
+        SELECT IFNULL(b.price,0.00) AS price
+FROM (
+    SELECT CURDATE() AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 1 DAY) AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 2 DAY) AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 3 DAY) AS click_date
+    UNION ALL
+
+
+
+    SELECT DATE_SUB(CURDATE(), INTERVAL 4 DAY) AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 5 DAY) AS click_date
+    UNION ALL
+    SELECT DATE_SUB(CURDATE(), INTERVAL 6 DAY) AS click_date
+) a LEFT JOIN (
+select date(o.order_time) as time,sum(s.shop_price) as price from orders o,shops s where o.shop_id = s.shop_id GROUP BY date(o.order_time)) b
+on a.click_date = b.time order by a.click_date ASC
+    </select>
+
+</mapper>

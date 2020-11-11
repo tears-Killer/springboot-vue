@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.mapper.ShopMapper">
+
+    <resultMap id="shopMap" type="shop">
+        <id column="shop_id" property="shopId"/>
+        <result column="shop_name" property="shopName"/>
+        <result column="shop_price" property="shopPrice"/>
+        <result column="shop_info" property="shopInfo"/>
+        <result column="shop_state" property="shopState"/>
+    </resultMap>
+    <select id="getAllShops" resultMap="shopMap">
+        select * from shops limit #{pageIndex},#{pageSize}
+    </select>
+
+    <select id="selectById" resultMap="shopMap">
+            select * from shops where shop_id = #{shopId}
+    </select>
+
+    <select id="selectShopByNameLike"  resultMap="shopMap">
+            select * from shops where shop_name like CONCAT('%',#{shopName},'%') limit #{pageIndex},#{pageSize}
+    </select>
+
+    <select id="selectShopCount" resultType="int">
+        select count(*) from shops
+    </select>
+
+    <select id="likeShopCount" parameterType="java.lang.String" resultType="int">
+        select count(*) from shops where shop_name like CONCAT('%',#{shopName},'%')
+    </select>
+
+    <delete id="deleteShop" parameterType="int">
+        delete from shops where shop_id = #{shopId}
+    </delete>
+
+    <insert id="addShop" parameterType="shop">
+        insert into shops(shop_name,shop_price,shop_info,shop_state) values(#{shopName},#{shopPrice},#{shopInfo},#{shopState})
+    </insert>
+
+    <update id="updateShop" parameterType="shop">
+        update shops set shop_name = #{shopName},shop_price = #{shopPrice},shop_info = #{shopInfo},
+         shop_state = #{shopState} where shop_id = #{shopId}
+    </update>
+</mapper>

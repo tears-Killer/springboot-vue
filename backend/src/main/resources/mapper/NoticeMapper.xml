@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.mapper.NoticeMapper">
+
+    <resultMap id="noticeMap" type="notice">
+        <id column="notice_id" property="noticeId"/>
+        <result column="notice_text" property="title"/>
+        <result column="notice_state" property="noticeState"/>
+        <result column="notice_time" property="date"/>
+    </resultMap>
+    <select id="selectAllNotice" resultMap="noticeMap">
+        select * from notice
+    </select>
+
+    <update id="update" parameterType="int">
+        update notice set notice_state = #{noticeState} where notice_id = #{noticeId}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        delete from notice where notice_id = #{noticeId}
+    </delete>
+
+    <insert id="addNotice" parameterType="notice">
+        insert into notice(notice_text,notice_time,notice_state) values(#{title},#{date},#{noticeState})
+    </insert>
+</mapper>

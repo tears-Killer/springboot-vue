@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.mapper.EmployeeMapper">
+
+    <resultMap id="employeeMap" type="employee">
+        <id column="employee_id" property="employeeId"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="employee_sex" property="employeeSex"/>
+        <result column="employee_age" property="employeeAge"/>
+        <result column="employee_phone" property="employeePhone"/>
+        <result column="employee_role" property="employeeRole"/>
+        <result column="employee_state" property="employeeState"/>
+    </resultMap>
+    <select id="getAllEmployee" parameterType="int" resultMap="employeeMap">
+        select * from employee limit #{pageIndex},#{pageSize}
+    </select>
+
+    <select id="selectEmployeeCount" resultType="int">
+        select count(*) from employee
+    </select>
+
+    <select id="selectByNameLike" resultMap="employeeMap">
+        select * from employee where employee_name like CONCAT('%',#{employeeName},'%') limit #{pageIndex},#{pageSize}
+    </select>
+
+    <select id="likeOrderCount" resultType="int">
+        select count(*) from employee where employee_name like CONCAT('%',#{employeeName},'%')
+    </select>
+
+    <insert id="addEmployee" parameterType="employee">
+        insert into employee(employee_name,employee_sex,employee_age,employee_phone,employee_role,employee_state)
+        values(#{employeeName},#{employeeSex},#{employeeAge},#{employeePhone},#{employeeRole},#{employeeState})
+    </insert>
+
+    <delete id="deleteEmployee" parameterType="int">
+        delete from employee where employee_id = #{employeeId}
+    </delete>
+
+    <update id="updateEmployee" parameterType="employee">
+        update employee set employee_name = #{employeeName},employee_sex = #{employeeSex},employee_age = #{employeeAge},
+        employee_phone = #{employeePhone},employee_role = #{employeeRole},employee_state = #{employeeState} where employee_id = #{employeeId}
+    </update>
+</mapper>

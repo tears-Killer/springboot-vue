@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinasoft.mapper.UserMapper">
+
+    <resultMap id="userMap" type="user">
+        <id column="user_id" property="userId"/>
+        <result column="account" property="account"/>
+        <result column="password" property="password"/>
+        <association property="employee" column="employee_id" javaType="employee">
+            <id column="employee_id" property="employeeId"/>
+            <result column="employee_name" property="employeeName"/>
+            <result column="employee_sex" property="employeeSex"/>
+            <result column="employee_age" property="employeeAge"/>
+            <result column="employee_phone" property="employeePhone"/>
+            <result column="employee_role" property="employeeRole"/>
+            <result column="employee_state" property="employeeState"/>
+        </association>
+    </resultMap>
+    <select id="selectByAccountAndPassword" parameterType="java.lang.String" resultMap="userMap">
+        select * from user,employee where user.employee_id = employee.employee_id  and account= #{account} and password = #{password}
+    </select>
+
+    <update id="updateUser" parameterType="user">
+        update user u,employee e set u.account = #{account},e.employee_name = #{employee.employeeName},e.employee_sex = #{employee.employeeSex},e.employee_age = #{employeeAge},e.employee_phone = #{employeePhone},e.employee_role = #{employee.employeeRole} where u.user_id = #{userId}
+    </update>
+</mapper>
